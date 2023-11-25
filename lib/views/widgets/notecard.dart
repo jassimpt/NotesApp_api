@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:todo_api/models/todo_model.dart';
+import 'package:todo_api/services/todoservices.dart';
+import 'package:todo_api/views/edit_page.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-class NoteCard extends StatelessWidget {
+class NoteCard extends StatefulWidget {
   AsyncSnapshot<List<TodoModel>> snapshot;
   NoteCard({
     required this.snapshot,
@@ -9,47 +12,104 @@ class NoteCard extends StatelessWidget {
   });
 
   @override
+  State<NoteCard> createState() => _NoteCardState();
+}
+
+class _NoteCardState extends State<NoteCard> {
+  List<TodoModel> todolist = [];
+  @override
+  void initState() {
+    // TODO: implement initState
+    if (widget.snapshot.hasData) {
+      todolist = widget.snapshot.data!;
+    }
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return GridView.builder(
-      itemCount: snapshot.data!.length,
+      itemCount: todolist.length,
       gridDelegate:
           const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
       itemBuilder: (context, index) {
-        final tododata = snapshot.data![index];
+        final tododata = todolist[index];
         return Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Container(
-            decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.1),
-                borderRadius: BorderRadius.all(Radius.circular(30))),
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              const Padding(
-                padding: EdgeInsets.only(left: 10, top: 10),
-                child: Text(
-                  'Title',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
+          child: GestureDetector(
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => EditScreen(
+                    description: tododata.description,
+                    title: tododata.title,
+                    id: tododata.id),
+              ));
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                  border: Border.all(color: Colors.black.withOpacity(0.2)),
+                  borderRadius: const BorderRadius.all(Radius.circular(15))),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 10, top: 10),
+                              child: Text('Title',
+                                  style: GoogleFonts.rubik(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w500)),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 10),
+                              child: Text(tododata.title!),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 10),
+                              child: Text(
+                                'Description',
+                                style: GoogleFonts.rubik(
+                                    fontSize: 18, fontWeight: FontWeight.w500),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 10),
+                              child: Text(tododata.description!),
+                            ),
+                            const SizedBox(
+                              height: 30,
+                              width: 10,
+                            ),
+                          ]),
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      IconButton(
+                          onPressed: () {
+                            deleteTodo(id: tododata.id);
+                          },
+                          icon: const Icon(Icons.delete))
+                    ],
+                  )
+                ],
               ),
-              Padding(
-                padding: const EdgeInsets.only(left: 10),
-                child: Text(tododata.title!),
-              ),
-              const Padding(
-                padding: EdgeInsets.only(left: 10),
-                child: Text(
-                  'Description',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 10),
-                child: Text(tododata.description!),
-              )
-            ]),
+            ),
           ),
         );
       },
     );
+  }
+
+  deleteTodo({required id}) {
+    TodoApiServices().deleteTodo(id: id);
+    setState(() {
+      todolist.removeWhere((element) => element.id == id);
+    });
   }
 }

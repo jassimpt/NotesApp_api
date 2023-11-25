@@ -4,6 +4,7 @@ import 'package:todo_api/services/todoservices.dart';
 import 'package:todo_api/views/widgets/dialogbox.dart';
 import 'package:todo_api/views/widgets/notecard.dart';
 import 'package:todo_api/views/widgets/shimmer_loader.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -17,35 +18,31 @@ class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController descriptioncontroller = TextEditingController();
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     TodoApiServices().getTodo();
   }
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
     return Scaffold(
-        floatingActionButton: SizedBox(
-          width: size.width * .25,
-          child: FloatingActionButton(
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return DialogBox(
-                      titlecontroller: titlecontroller,
-                      descriptioncontroller: descriptioncontroller);
-                },
-              );
-            },
-            backgroundColor: const Color.fromARGB(255, 200, 200, 200),
-            shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(30))),
-            child: const Icon(
-              Icons.add,
-              color: Colors.black,
-            ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (context) {
+                return DialogBox(
+                    titlecontroller: titlecontroller,
+                    descriptioncontroller: descriptioncontroller);
+              },
+            );
+          },
+          backgroundColor: const Color.fromARGB(255, 200, 200, 200),
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20))),
+          child: const Icon(
+            Icons.add,
+            size: 35,
+            color: Colors.white,
           ),
         ),
         body: SafeArea(
@@ -55,15 +52,13 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(
                 height: 10,
               ),
-              const Padding(
+              Padding(
                 padding: EdgeInsets.all(15),
-                child: Text(
-                  'NOTES',
-                  style: TextStyle(
-                      fontSize: 25,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold),
-                ),
+                child: Text('NoteTaker',
+                    style: GoogleFonts.ubuntu(
+                        fontSize: 25,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold)),
               ),
               FutureBuilder<List<TodoModel>>(
                 future: TodoApiServices().getTodo(),

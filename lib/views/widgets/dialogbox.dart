@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:todo_api/models/todo_model.dart';
 import 'package:todo_api/services/todoservices.dart';
 
@@ -24,29 +25,53 @@ class _DialogBoxState extends State<DialogBox> {
         child: Padding(
           padding: const EdgeInsets.all(20),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
+              Text(
+                'Add Note',
+                style: GoogleFonts.rubik(
+                    fontSize: 25, fontWeight: FontWeight.w500),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
               TextFormField(
                 controller: widget.titlecontroller,
                 decoration: const InputDecoration(
-                    labelText: 'Title', border: OutlineInputBorder()),
+                    labelText: 'Title',
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(20)))),
               ),
               const SizedBox(
                 height: 10,
               ),
               TextFormField(
                 controller: widget.descriptioncontroller,
+                maxLines: 4,
                 decoration: const InputDecoration(
-                    hintText: 'Description', border: OutlineInputBorder()),
+                    hintText: 'Description',
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(20)))),
               ),
               const SizedBox(
                 height: 20,
               ),
-              ElevatedButton(
-                  onPressed: () {
-                    createNote();
-                  },
-                  child: const Text('Save'))
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                      onPressed: () {
+                        createNote();
+                      },
+                      child: const Text('Add')),
+                  TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text('Cancel'))
+                ],
+              )
             ],
           ),
         ),
